@@ -106,7 +106,7 @@ for course in courses[2::]:
         hwsoup=getHtml("http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/hom_wk_brw.jsp?course_id="+str(course_id))
         c=Course(course_id,course_name,ltsoup,hwsoup)
         c.mkDir(basedir)
-        #c.getLtDownload()
+        c.getLtDownload()
         c.getHwDownload()
         sleep(60)
     except Exception,e:
