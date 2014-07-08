@@ -37,7 +37,7 @@ def download_file(url, name, has_ext=False):
     filename = safe_name(name)
     if not has_ext:
         filename = filename + ext_name(req.headers['Content-Disposition'].split('"')[-2])
-    open(filename.encode('utf-8'), 'w').write(req.content)
+    open(filename.encode('gbk', 'ignore').translate(None, '\\|/:*?"<>'), 'wb').write(req.content)  #file name gbk
 
 
 def is_list_item(tag):
@@ -49,7 +49,7 @@ def is_list_item(tag):
 
 class Page:
     def __init__(self, url, local_name, visit_sub_pages=None, download_files=None):
-        local_name = safe_name(local_name)
+        local_name = safe_name(local_name).encode('gbk', 'ignore').translate(None, '\\|/:*?"<>')  #folder name gbk
         if visit_sub_pages or download_files:
             if not os.path.isdir(local_name):
                 os.mkdir(local_name)
@@ -137,7 +137,7 @@ class FileListPage(Page):
             for tr in soup.findAll(is_list_item):
                 link = tr.a['href']
                 name = tr.a.getText().strip()
-                print u'  下载课件 ' + name + ' (' + tr.contents[9].getText().strip() + ')'
+                print u'  下载课件 ' + name.replace(u'\xa0', ' ') + ' (' + tr.contents[9].getText().strip() + ')'   #replace \xa0
                 download_file(site + link, name)
 
         Page.__init__(self,
@@ -153,7 +153,7 @@ class HomeWorkListPage(Page):
                 link = '/MultiLanguage/lesson/student/' + tr.a['href']
                 name = tr.a.getText().strip()
                 size = tr.contents[9].contents[0].strip()
-                print u'  下载作业 ' + name + ' (' + size + ')'
+                print u'  下载作业 ' + name.replace(u'\xa0', ' ') + ' (' + size + ')'   #replace \xa0
                 HomeWorkPage(link, name)
         Page.__init__(self,
                       '/MultiLanguage/lesson/student/hom_wk_brw.jsp?course_id=' + course_id,
